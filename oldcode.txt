@@ -1,0 +1,49 @@
+Meti aqui as cenas que mudei, para não estar a apagar nada
+
+
+    // creio que não é necessário testar o programa
+    // reading argv
+    if (argc < 3) {
+    cout << "Não existem argumentos suficientes";
+    return 0;
+    }
+    int n = std::stoi(argv[1]);
+    int m = std::stoi(argv[2]);
+    vector<vector<int>> operations(n, vector<int>(n));        // matrix of size n x n with operations
+    int index = 3;
+    for (int i = 0; i < n; ++i) {
+        for (int j = 0; j < n; ++j) {
+            operations[i][j] = std::stoi(argv[index++]);
+        }
+    }
+
+    vector<int> sequence(m);
+    for (int i = 0; i < m; i++){
+        sequence[i] = std::stoi(argv[index++]);
+    }
+    
+    int result = std::stoi(argv[index]);
+    end of reading argv
+    vector<vector<vector<pair<int, int>>>> solutions(m, vector<vector<pair<int, int>>>(m));      // matrix for calculation of the final solution
+
+    calculateSolution(n, m, &operations, &sequence, &solutions);
+
+/**
+ *  Function to calculate the solution of the problem
+**/
+int calculateSolution  (int n, int m,
+                        vector<vector<int>> *operations,
+                        vector<int> *sequence,
+                        vector<vector<vector<pair<int, int>>>> *solutions) {
+
+    int k;
+
+    for (int startcol = 0; startcol < m; startcol++) {
+        // cenas
+        if (i = j) {
+
+        }
+    }
+
+    return 0;
+}
