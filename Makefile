@@ -13,7 +13,7 @@ CXX = g++
 CXXFLAGS = -std=c++11 -O3 -Wall -lm
 
 # Ficheiros fonte (adicionar mais ficheiros se necessário)
-SRCS = projeto.cpp
+SRCS = proj.cpp
 
 # Ficheiros objeto gerados
 OBJS = $(SRCS:.cpp=.o)
