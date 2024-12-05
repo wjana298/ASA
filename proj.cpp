@@ -30,8 +30,10 @@ void operation(vector<int> a, vector<int> b, vector<vector<int>> *operations) {
     }
 }
 
-vector<pair<vector<int>, int>> calculatePossibleResults(int i, int j, vector<vector<int>> *operations, vector<int> *sequence, vector<vector<vector<pair<vector<int>, int>>>> *matrizDeResultados) {
-	vector<pair<vector<int>, int>> possibleResults;
+vector<pair<int, int>> calculatePossibleResults(int i, int j, 
+                                                vector<vector<int>> *operations, vector<int> *sequence, 
+                                                vector<vector<vector<pair<int, int>>>> *matrizDeResultados) {
+	vector<pair<int, int>> possibleResults;
 
     if (i == j) {
         possibleResults.push_back({{(*sequence)[i]}, -1});
@@ -67,7 +69,7 @@ int main() {
     cin >> r;
 
     /* matrix para resolver o problema */
-    vector<vector<vector<pair<vector<int>, int>>>> matrizDeResultados(m, vector<vector<pair<vector<int>, int>>>(m));  // m x m x k, em que k são as posições dos parenteses
+    vector<vector<vector<pair<int, int>>>> matrizDeResultados(m, vector<vector<pair<int, int>>>(m));  // m x m x k, em que k são as posições dos parenteses
 
     for (int start = 0; start < m; start++) {
         int i = 0, j = start;               // j = coluna, i = linha
