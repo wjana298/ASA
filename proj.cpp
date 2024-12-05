@@ -4,42 +4,19 @@
 
 using namespace std;
 
-/**
- *  calculateSolution: function to calculate the solution of the problem using dynamic programming 
- * 
- *  INPUT:
- *      n: size of the matrix
- *      m: size of the sequence
- *      operations: matrix of size n x n with operations
- *      sequence: vector with the sequence to solve
- *      solutions: matrix for calculation of the final solution
- * 
- *  OUTPUT:
- *      completed solutions matrix
- * */
-void calculateSolution(int n, int m,
-                        vector<vector<int>> *operations,
-                        vector<int> *sequence,
-                        vector<vector<vector<pair<int, int>>>> *solutions) {
-    
-    cout << "calculateSolution: started" << endl;
-
-    cout << "calculateSolution: ended" << endl;
-    }
-
-void initializeSolution(int m,
-                        vector<int> *sequence,
-                        vector<vector<vector<pair<int, int>>>> *solutions) {
-    
-    cout << "initializeSolution: started" << endl;
-
-    for (int i = 0; i < m; i++) {
-        (*solutions)[i][i].push_back(make_pair((*sequence)[i], 0));
-        cout << (*solutions)[i][i][0].first << " " << (*solutions)[i][i][0].second << endl;
+void setOperations(int n, vector<vector<int>> *operations) {
+    for (int i = 0; i < n; ++i) {                           // reading the matrix
+        for (int j = 0; j < n; ++j) {                       // quando o projeto estiver pronto, mudar para argv
+            cin >> (*operations)[i][j];
         }
-
-    cout << "initializeSolution: ended" << endl;
     }
+}
+
+void setSequence(int m, vector<int> *sequence) {
+    for (int i = 0; i < m; i++){                             // reading the sequence
+        cin >> (*sequence)[i];
+    }
+}
 
 int main(int argc, char *argv[]) {
     std::ios::sync_with_stdio(0);
@@ -49,36 +26,27 @@ int main(int argc, char *argv[]) {
     // n = size of the matrix, m = size of the sequence, r = result
     int n, m;
     int r;
-    cin >> n;                   
-    cin >> m;
-    cout << n << " " << m << endl;
+    cin >> n >> m;
 
+    /* iniciar a matrix com os resultados das operações*/
     vector<vector<int>> operations(n, vector<int>(n));      // matrix of size n x n with operations
-    for (int i = 0; i < n; ++i) {                           // reading the matrix
-        for (int j = 0; j < n; ++j) {
-            cin >> operations[i][j];
-            cout << operations[i][j] << " ";
-        }
-        cout << endl;
-    }
+    setOperations(n, &operations);
 
+    /* iniciar o vetor com a sequência a resolver */
     vector<int> sequence(m);
-    for (int i = 0; i < m; i++){                             // reading the sequence
-        cin >> sequence[i];
-        cout << sequence[i] << " ";
-    }
-    cout << endl;
+    setSequence(m, &sequence);
 
+    /* valor a encontrar */
     cin >> r;
-    cout << r << endl;
 
-    vector<vector<vector<pair<int, int>>>> solutions(m, vector<vector<pair<int, int>>>(m));      // matrix for calculation of the final solution
-
-    initializeSolution(m, &sequence, &solutions);
+    /* matrix para resolver o problema */
+    vector<vector<vector<int>>> matrizDeResultados(m, vector<vector<int>>(m));  // m x m x k, em que k são as posições dos parenteses
     
-    for (int start = 1; start < m; start++) {               // percorre a matriz de soluções apenas nas casas relevantes
-        int i = start, j = 0;
+    for (int i = 0; i < m; i++) {
+        matrizDeResultados[i][i].push_back(sequence[i]);    // casos base
     }
+
+    for (int start = 0; )
 
     return 0;
 }
