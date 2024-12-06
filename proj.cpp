@@ -5,130 +5,135 @@
 
 using namespace std;
 
-// vector<tuple<int, int, int, int>> calculatePossibleResults(int i, int j, 
-//                                                 vector<vector<int>> *operations, vector<int> *sequence, 
-//                                                 vector<vector<vector<tuple<int, int, int, int>>>> *matrizDeResultados) {
-// 	vector<tuple<int, int, int, int>> possibleResults;
+string obter_parentizacao(int i, int j, int resultado_esperado,
+                                 vector<vector<vector<tuple<int, int, int, int>>>> &matriz_de_resultados,
+                                 vector<vector<string>> &tabela_de_parenteses) {
+    if (tabela_de_parenteses[i][j] != "") return tabela_de_parenteses[i][j];        // Se já existir a parentização, devolve-a
 
-//     if (i == j) {
-//         possibleResults.push_back(make_tuple((*sequence)[i], -1, -1, -1));
-//         cout << "i == j == " << (*sequence)[i] << endl;
-//         return possibleResults;
-//     }
-
-//     vector<tuple<int, int, int, int>> primeiro, segundo;
-
-//     for (int k = j - 1; k >= i; k--) {
-//         primeiro = (*matrizDeResultados)[i][k];
-//         segundo = (*matrizDeResultados)[k+1][j];
-
-//         for(int a = 0; a < primeiro.size(); a++){
-//             for(int b = 0; b < segundo.size; b++){
-                
-//             }
-//         }
-        
-//     }
-// 	return possibleResults;
-
-
-//     M[1][3] = M[1][1] + M[2][3], M[1][2] + M[3][3].
-
-//     M[1][1] -> 2 tuple<2, 1, -1, -1>
-//     M[2][3] -> 3 tuple<3, 1, -1, -1>
-//     possibleResults = operations[primeiro[0][0], segundo[0][0]];
-
-//     primeiro = M[1][2] -> {1,2,3} tuple<1, 2, -1, -1>, tuple<2,3,-1,-1>, tuple<3,3,-1,-1>
-//     segundo = M[3][3] -> {1,2} tuple<1, 1, -1, -1>, tuple<2, 2, -1, -1>
-
-//     for(primeiro[a] : m)
-//         for(segundo[b] : m)
-//             possibleResults = operations[primeiro[a][0] + segundo [b][0]];
-
-
-
-// }
-
-vector<tuple<int, int, int, int>> calculatePossibleResults(
-    int i, int j, 
-    vector<vector<int>> *operations, 
-    vector<int> *sequence, 
-    vector<vector<vector<tuple<int, int, int, int>>>> *matrizDeResultados) {
-    
-    vector<tuple<int, int, int, int>> possibleResults;
-
-    // Caso base: i == j, retorna o valor diretamente da sequência
-    if (i == j) {
-        possibleResults.push_back(make_tuple((*sequence)[i], -1, -1, -1));
-        cout << "i == j == " << (*sequence)[i] << endl;
-        return possibleResults;
+    if (i == j) {                                                                           
+        tabela_de_parenteses[i][j] = to_string(get<0>(matriz_de_resultados[i][j][0]));  // No caso de m = 1, devolve sequencia[0]
+        return tabela_de_parenteses[i][j];
     }
 
-    // Combinar os subproblemas
-    for (int k = i; k <= j; k++) {  // Dividir a sequência em (i..k) e (k+1..j)
-        const auto &leftResults = (*matrizDeResultados)[i][k];
-        const auto &rightResults = (*matrizDeResultados)[k + 1][j];
+    for (const auto &res : matriz_de_resultados[i][j]) {                            // Percorre os resultados possíveis
+        int valor = get<0>(res);
+        int k = get<1>(res);
+        int esq = get<2>(res);
+        int dir = get<3>(res);
+        
+        if (valor == resultado_esperado) {                                          
+            // Obter a parentização já calculada para a esquerda e para a direita
+            string parcela_esquerda = obter_parentizacao(i, k, esq, matriz_de_resultados, tabela_de_parenteses);
+            string parcela_direita = obter_parentizacao(k + 1, j, dir, matriz_de_resultados, tabela_de_parenteses);
 
-        for (const auto &left : leftResults) {
-            for (const auto &right : rightResults) {
-                // Obter os valores das subpartes
-                int leftValue = get<0>(left);
-                int rightValue = get<0>(right);
+            tabela_de_parenteses[i][j] = "(" + parcela_esquerda + " " + parcela_direita + ")";  // Coloca os parenteses no problema atual
+            return tabela_de_parenteses[i][j];
+        }
+    }
 
-                // Realizar a operação binária
-                int result = (*operations)[leftValue - 1][rightValue - 1];
+    return "";
+}
 
-                // Adicionar o resultado e o índice de divisão k
-                possibleResults.push_back(make_tuple(result, i, j, k));
-                cout << result << " " << i+1 << " " << j+1 << " " << k+1 << endl;
+vector<tuple<int, int, int, int>> calcular_resultados_possiveis(int i, int j, int n,
+                                                vector<vector<int>> *operacoes, vector<int> *sequencia, 
+                                                vector<vector<vector<tuple<int, int, int, int>>>> *matriz_de_resultados) {
+
+	vector<tuple<int, int, int, int>> resultados_possiveis;     // {valor, k, valor da esquerda usado na sua operacao, valor da direita "}
+
+    //Preenche diagonal principal com v=i e k=-1
+    if (i == j) {
+        resultados_possiveis.push_back(make_tuple((*sequencia)[i], -1, -1, -1));
+        return resultados_possiveis;
+    }
+
+    //Vetor auxiliar para saber se já obtivemos todos os valores possiveis de n
+    vector<int> seq(n,-1);
+    
+    //Loop que percorre todas opcoes de k na célula [i,j]
+    // M[i,j] = M[i,k] + M[k+1,j] para i <= k < j
+    for (int k = j - 1; k >= i; k--) {
+        const auto &parcela_esquerda = (*matriz_de_resultados)[i][k];
+        const auto &parcela_direita = (*matriz_de_resultados)[k+1][j];
+        for (const auto &esq : parcela_esquerda){
+            for (const auto &dir : parcela_direita){
+                int valor_esq = get<0>(esq);
+                int valor_dir = get<0>(dir);
+
+                int resultado = (*operacoes)[valor_esq - 1][valor_dir - 1];
+
+                // Verifica se este n já foi encontrado. Se tiver sido então guarda-o com o k e valores respetivos.
+                if(resultado != seq[resultado - 1]){
+                    seq[resultado-1] = resultado;
+                    resultados_possiveis.push_back(make_tuple(resultado, k, valor_esq, valor_dir));
+                }
+
+                // Se resultados_possiveis tiver o mesmo tamanho que n, significa que encontramos todos os valores possiveis de n
+                if (resultados_possiveis.size() == static_cast<size_t>(n)) {
+                    return resultados_possiveis;
+                }
             }
         }
     }
 
-    return possibleResults;
+	return resultados_possiveis;
 }
+
 
 int main() {
     std::ios::sync_with_stdio(0);
-    std::cin.tie(0);
+    std::cin.tie(0);                    
 
-    // Usei cin, porque é mais simples de visualizar, mas acho que argv seria melhor
-    // n = size of the matrix, m = size of the sequence, r = result
+    // Obter tamanho da matriz de operações e da sequência
     int n, m;
     cin >> n >> m;
 
-    /* iniciar a matrix com os resultados das operações*/
-    vector<vector<int>> operacoes(n, vector<int>(n));      // matrix of size n x n with operations
-    for (int i = 0; i < n; ++i) {                           // reading the matrix
-        for (int j = 0; j < n; ++j) {                       // quando o projeto estiver pronto, mudar para argv
+    // Obter a matriz de operações |n x n|
+    vector<vector<int>> operacoes(n, vector<int>(n));
+    for (int i = 0; i < n; ++i) {
+        for (int j = 0; j < n; ++j) {
             cin >> operacoes[i][j];
         }
     }
 
-    /* iniciar o vetor com a sequência a resolver */
+    // Obter a sequência a resolver |m|
     vector<int> sequencia(m);
-        for (int i = 0; i < m; i++){                    // reading the sequence
+        for (int i = 0; i < m; i++){
         cin >> sequencia[i];
     }
 
-    /* valor a encontrar */
+    // Resultado esperado
     int r;
     cin >> r;
+    
+    // Matriz de resultados
+    vector<vector<vector<tuple<int, int, int, int>>>> matriz_de_resultados (m, vector<vector<tuple<int, int, int, int>>>(m));
 
-    /* matrix para resolver o problema */
-    vector<vector<vector<tuple<int, int, int, int>>>> matrizDeResultados (m, vector<vector<tuple<int, int, int, int>>>(m));  // m x m x k, em que k são as posições dos parenteses
-
-    for (int start = 0; start < m; start++) {
-        int i = 0, j = start;               // j = coluna, i = linha
-
-        while (j < m) {                     // isto vai iterar sobre a matriz diagonalmente
-			cout << i+1 << " " << j+1 << "\n";
-            matrizDeResultados[i][j] = calculatePossibleResults(i, j, &operacoes, &sequencia, &matrizDeResultados);
-            j++;
-			i++;
+    // Preencher a matriz de resultados diagonalmente, começando na diagonal i == j até ao canto superior direito
+    for (int len = 1; len <= m; ++len) {
+        for (int i = 0; i + len - 1 < m; ++i) {
+            int j = i + len - 1;
+            matriz_de_resultados[i][j] = calcular_resultados_possiveis(i, j, n, &operacoes, &sequencia, &matriz_de_resultados);
         }
-		cout << endl;
     }
 
+    // Verifica se o resultado esperado é possível
+    bool existe = false;
+    for (const auto &res : matriz_de_resultados[0][m - 1]) {        
+        if (get<0>(res) == r) {
+            existe = true;
+            break;
+        }
+    }
+
+    // Gerar o output
+    if (existe) {
+        cout << "1\n";                                     
+        vector<vector<string>> tabela_de_parenteses(m, vector<string>(m, ""));                  // Tabela de parentizações para memoização
+        cout << obter_parentizacao(0, m - 1, r, matriz_de_resultados, tabela_de_parenteses) << endl;
+    } else {
+        cout << "0\n";                                                                          // Se não existe solução
+    }
+
+    // Devolve 0 para indicar que o programa terminou sem erros
     return 0;
 }
