@@ -1,3 +1,7 @@
+/* Projeto 1 de ASA 
+TP040, Joana Guia 99147, Miguel Trêpa 109370
+*/
+
 #include <iostream>
 #include <vector>
 #include <string>
@@ -61,7 +65,7 @@ vector<tuple<int, int, int, int>> calcular_resultados_possiveis(int i, int j, in
 
                 int resultado = (*operacoes)[valor_esq - 1][valor_dir - 1];
 
-                // Verifica se este n já foi encontrado. Se tiver sido então guarda-o com o k e valores respetivos.
+                // Verifica se este n já foi encontrado. Se não tiver sido então guarda-o com o k e valores respetivos.
                 if(resultado != seq[resultado - 1]){
                     seq[resultado-1] = resultado;
                     resultados_possiveis.push_back(make_tuple(resultado, k, valor_esq, valor_dir));
@@ -134,6 +138,5 @@ int main() {
         cout << "0\n";                                                                          // Se não existe solução
     }
 
-    // Devolve 0 para indicar que o programa terminou sem erros
     return 0;
 }
