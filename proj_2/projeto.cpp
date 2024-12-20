@@ -1,11 +1,13 @@
 /**
  * @file project.cpp
- * @brief This file contains the implementation of the second project for ASA.
+ * @brief Implementação do segundo projeto de ASA.
  *
- * Meter aqui uma descricao do projeto assim que percebermos o que e suposto fazer. 
+ * O projeto usa duas listas, uma com as estações que pertecem a cada linha e outra
+ * com as linhas que passam por cada estação. A partir destas duas listas, criamos um
+ * grafo de linhas para linhas, onde cada nó é uma linha e as arestas são as ligações
+ * entre as linhas. De seguida podemos fazer uma BFS para encontrar o maior indice
+ * de conectividade.
  * 
- * 
- *
  * @author Miguel Trepa (109370) & Joana Guia (99147)
  * @date 15-12-2020
  */
@@ -21,13 +23,19 @@ using namespace std;
 int stations, connections , lines;
 int lines_removed = 0;
 
-/*  Gráfo com apenas as linhas */
+/*  Grafo Linha - Linha */
 vector<set<int>> graph;
 /*  Lista de linhas que passam por cada estação */
 vector<set<int>> node_line_graph;   
+/*  Lista de estações que pertencem a cada linha */
 vector<set<int>> line_node_graph;
 
-
+/**
+ * @brief Função que remove linhas repetidas
+ * 
+ * Percorre todas as linhas e verifica se estão contidas noutra linha.
+ * Se estiverem, o algoritmo remove a linha que está contida.
+ */
 void remover_repetidos (){
     for (int i = 0; i < lines; i++) {
         auto& ui = line_node_graph[i];
@@ -49,6 +57,12 @@ void remover_repetidos (){
     }
 }
 
+/**
+ * @brief Função que faz uma BFS para encontrar o maior indice de conectividade
+ * 
+ * @param start - linha de inicio
+ * @return int - maior indice de conectividade
+ */
 int BFS(int start){
     vector<bool> visited(lines, false);
     queue<pair<int,int>> q;
@@ -90,7 +104,6 @@ int main() {
     
     cin >> stations >> connections >> lines;
 
-    // Vetor para representar quais as linhas que passam por uma estação
     node_line_graph = vector<set<int>>(stations, set<int>());
     line_node_graph = vector<set<int>>(lines, set<int>());
 
@@ -111,6 +124,7 @@ int main() {
         line_node_graph[l].insert(y);
     }
 
+    // se uma estação não pertencer a nenhuma linha, devolve -1 e termina
     for(auto &i : node_line_graph) {
         if(i.empty()) {
             cout << -1 << endl;
@@ -118,49 +132,14 @@ int main() {
         }
     }
 
-    // // print node_line_graph
-    // for(int i = 0; i < stations; i++) {
-    //     cout << i+1 << ": ";
-    //     for(int j : node_line_graph[i]) {
-    //         cout << j+1 << " ";
-    //     }
-    //     cout << endl;
-    // }
-
-    // // print line_node_graph
-    // for(int i = 0; i < lines; i++) {
-    //     cout << i+1 << ": ";
-    //     for(int j : line_node_graph[i]) {
-    //         cout << j+1 << " ";
-    //     }
-    //     cout << endl;
-    // }
-
     // Remover linhas repetidas
     remover_repetidos();
-
-    // for(int i = 0; i < lines; i++) {
-    //     cout << i+1 << ": ";
-    //     for(int j : line_node_graph[i]) {
-    //         cout << j+1 << " ";
-    //     }
-    //     cout << endl;
-    // }
-
-    // // print node_line_graph
-    // for(int i = 0; i < stations; i++) {
-    //     cout << i+1 << ": ";
-    //     for(int j : node_line_graph[i]) {
-    //         cout << j+1 << " ";
-    //     }
-    //     cout << endl;
-    // }
 
     // Criar grafo final de linhas-linhas
     graph = vector<set<int>>(lines, set<int>());
     for(int line = 0; line < lines; line++) {
         if(line_node_graph[line].empty()) {
-            continue;
+            continue;                          
         }
         for(int node : line_node_graph[line]) {
             for(int l : node_line_graph[node]) {
@@ -171,6 +150,7 @@ int main() {
         }
     }
 
+    // Encontrar o maior indice de conectividade a partir do grafo linhas-linhas
     int connectivity = 0;
     for(int i = 0; i < lines; i++) {
         int tmp = BFS(i);
