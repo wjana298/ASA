@@ -39,11 +39,11 @@ vector<set<int>> line_node_graph;
 void remover_repetidos (){
     for (int i = 0; i < lines; i++) {
         auto& ui = line_node_graph[i];
-        if (ui.empty()) continue;
+        if (ui.empty()) continue;       // ui e lido em portugues
         
         for(int j = 0; j < lines; j++){
             if (i==j) continue;
-            auto& oi = line_node_graph[j];
+            auto& oi = line_node_graph[j];  // oi e lido em brasileiro
             if(oi.empty()) continue;
             if(includes(oi.begin(), oi.end(), ui.begin(), ui.end())) {
                 // Clear line from nodes
@@ -102,30 +102,33 @@ int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
     
+    // Ler primeira linha do input
     cin >> stations >> connections >> lines;
 
     node_line_graph = vector<set<int>>(stations, set<int>());
     line_node_graph = vector<set<int>>(lines, set<int>());
 
+    // Ler as conexões
     for (int i = 0; i < connections; i++) {
         int  x, y, l;
 
-        // Processar o input
+        // Processar as próximas #connections linhas
         cin >> x >> y >> l;
-        x = x - 1;  // Para começar em 0
+        x = x - 1;  // Para o indice inicial ser 0
         y = y - 1;
         l = l - 1;
 
         // Adicionar a linha as estaçoes
         node_line_graph[x].insert(l);
         node_line_graph[y].insert(l);
+
         // Adicionar as estaçoes a linha
         line_node_graph[l].insert(x);
         line_node_graph[l].insert(y);
     }
 
-    // se uma estação não pertencer a nenhuma linha, devolve -1 e termina
-    for(auto &i : node_line_graph) {
+    // Se uma estação não pertencer a nenhuma linha, devolve -1 e termina
+    for (auto &i : node_line_graph) {
         if(i.empty()) {
             cout << -1 << endl;
             return 0;
