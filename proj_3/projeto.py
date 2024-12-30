@@ -7,31 +7,25 @@ Autores: Miguel Trêpa, nº 109370 & Joana Guia, nº 99147
 import pulp
 import sys
 
-# Coleção de dados
-# Este passo tem complexidade O(n + m + c), onde 
-# n é o número de fábricas, m é o número de países e c é o número de crianças
+# Lê a primeira linha contendo o número de fábricas, países e crianças
+factories, countries, children = map(int, sys.stdin.readline().strip().split())
 
-# factories, countries, children = [int(n) for n in input().split(" ")]
+# Lê as fábricas
+factory_data = []
+for _ in range(factories):
+    factory_data.append(list(map(int, sys.stdin.readline().strip().split())))
 
-# print(factories, countries, children)
+# Lê os países
+country_data = []
+for _ in range(countries):
+    country_data.append(list(map(int, sys.stdin.readline().strip().split())))
 
-for line in sys.stdin:
-    print(line.strip())
+# Lê os pedidos das crianças
+child_requests = []
+for _ in range(children):
+    child_requests.append(list(map(int, sys.stdin.readline().strip().split())))
 
-# print(f"Factories: {factories}")
-# for i in range(factories):
-#     factory = input().split(" ")
-#     factory = [int(x) for x in factory]
-#     print(factory)
-
-# print(f"Countries: {countries}")
-# for i in range(countries):
-#     country = input().split(" ")
-#     country = [int(x) for x in country]
-#     print(country)
-
-# print(f"Children: {children}")
-# for i in range(children):
-#     child = input().split(" ")
-#     child = [int(x) for x in child]
-#     print(child)
+# Debugging: Exibir as informações lidas
+print("Factories:", factory_data)
+print("Countries:", country_data)
+print("Child Requests:", child_requests)
